@@ -1,4 +1,4 @@
-# Bienvenidos a la applicación de SHIELD para Admin-Sistemas
+# Bienvenidos a la aplicación de SHIELD para Admin-Sistemas
 
 ## Instalación del proyecto en local:
 1. Haz un fork del proyecto.
@@ -57,7 +57,7 @@ pip install fabric
 ```
 ### Crea del fichero de trabajo `fabfile.py` y comprueba la conexión con el servidor remoto:
 
-0. Crea un fichero llamado `fabfile.py` con el siguiente contenido:
+Crea un fichero llamado `fabfile.py` con el siguiente contenido:
 ```python
 from fabric import Connection, task
 
@@ -73,9 +73,8 @@ def deploy(ctx):
         conn.run("uname")
         conn.run("ls")
 ```
-
 (Con las funciones anteriores aparecerá la distribución sobre la que corre la aplicación y los ficheros no ocultos que se tiene en el local de la máquina remota).
-### Despliegue: Completar el fichero `fabfile.py` para instalar el proyecto shield en una máquina remota con Fabric.
+### Despliegue: Completa el fichero `fabfile.py` para que instale el proyecto shield en una máquina remota con Fabric.
 1. Se añaden los import necearios:
 ```python
 import sys
@@ -240,8 +239,45 @@ fab development deploy
 
 
 ## Despliegue del  proyecto en una máquina remota con Ansible.
+0. Instala Ansible en tu máquina local (Terminal de Ubuntu).
+```
+sudo apt update
+sudo apt install software-properties-common
+sudo apt-add-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible
+```
+Para comprobar que se instaló correctamente ejecuta el siguiente comando:
+```
+ansible localhost -m ping --ask-pass
+```
+1. Dentro de la aplicación shield, crea la carpeta "ansible".
 
+2. La carpeta "ansible" debe contener los siguiente ficheros:
+- Fichero nombrado "hosts": En este fichero ubicaremos el inventario. 
 
+- Fichero nombrado "vars.yml":Este fichero contendrá las variables de la máquina.
+
+- Fichero nombrado "provision.yml": Es el ejecutable para provisionar la máquina (librerias, etc).
+El fichero `provision.yml`se debe ejecutar con el siguiente comando:
+
+```
+ ansible-playbook -i hosts provision.yml --user=cristopher --ask-pass --ask-become-pass
+```
+Si usas AWS :
+```
+ansible-playbook -i hosts provision.yml --user=cristopher --ask-pass --ask-become-pass
+```
+
+- Fichero nombrado "deploy.yml": Contendrá el despliegue de la aplicación en python.
+```
+ ansible-playbook -i hosts deploy.yml --user=cristopher --ask-pass --ask-become-pass
+```
+Si usas AWS :
+```
+ansible-playbook -i hosts deploy.yml --user=cristopher --ask-pass --ask-become-pass
+```
+
+Puede visitar `https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html ` para completar los distintos ficheros anteriormente nombrados.
 ## Despliegue del  proyecto en una máquina remota con Docker.
 
 

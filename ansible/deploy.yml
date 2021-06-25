@@ -1,0 +1,41 @@
+---
+- hosts: servers
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  become: yes
+
+  tasks:
+    - name: Clone/pull project repo
+      git:
+        repo: "{{ project_repo }}"
+        dest: "{{ install_root }}/{{ project_name }}"
+        accept_hostkey: yes
+        force: yes
+      notify:
+      - restart gunicorn
+
+    - name: Install python packages
+      pip:
+        requirements: "{{ install_root }}/{{ project_name }}/requirements.txt"
+      notify:
+      - restart gunicorn
+
+    - name: Make manage.py executable
+      file:
+        path: "{{ install_root }}/{{ project_name }}/manage.py"
+        mode: 0777
+
+    - name: shield migrate
+      django_manage:
+        command: migrate
+        app_path: "{{ install_root }}/{{ project_name }}"
+
+    - name: shield load data
+      django_manage:
+        command: loaddata
+        app_path: "{{ install_root }}/{{ project_name }}"
+        fixtures: "{{ install_root }}/{{ project_name }}/{{ fixtures_file }}"
+
+
+    

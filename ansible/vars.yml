@@ -1,0 +1,45 @@
+---
+# a unix path-friendly name (IE, no spaces or special characters)
+project_name: shield
+
+# the base path to install to. You should not need to change this.
+install_root: /ansible
+
+# the correct wsgi_module value would be `django_polls.wsgi`
+wsgi_module: shield.wsgi
+
+# any directories that need to be added to the PYTHONPATH.
+pythonpath: "/usr/bin/python3"
+
+# the git repository URL for the project
+project_repo: https://github.com/cristophca/shield.git
+
+# fixture path for initial data load
+fixtures_file: metahumans/fixtures/initial_data.json
+
+# fixture path for initial data load
+supervisor_service: shield-ansible
+
+# a private key that has access to the repository URL
+ssh_private_key: ~/.ssh/id_rsa
+
+# The value of your django project's STATIC_ROOT settings.
+# This will be the directory that django's `collectstatic` management command
+# copies static files to, and it must be an absolute path. The default value 
+# here assumes that STATIC_ROOT is set in your settings.py like so:
+# STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, 'static'))
+static_root: "{{ install_root }}/{{ project_name }}/comun/static"
+
+# the dns name or names (space separated) for your server
+#server_name: django-polls.com www.django-polls.com
+
+# apt packages, you should not need to change this unless you have packages
+# listed in your requirements.txt that depend on system packages.
+system_packages:
+  - git
+  - python3-pip
+  - python3-dev
+  - nginx
+  - gunicorn
+  - supervisor
+  - python-is-python3
