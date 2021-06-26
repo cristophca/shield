@@ -51,7 +51,8 @@ python manage.py runserver
 A continuación, se detalla la información necesaria para poder desplegar la aplicación con Fabric, Ansible y Docker en cualquier máquina remota con sistema operativo Ubuntu (Vagran o servidor AWS).
 
 ## Despliegue del  proyecto en una máquina remota con Fabric.
-0. Instalar la libreria de fabric
+### Instalaciones necesarias:
+Instalar la libreria de fabric:
 ```
 pip install fabric
 ```
@@ -74,7 +75,8 @@ def deploy(ctx):
         conn.run("ls")
 ```
 (Con las funciones anteriores aparecerá la distribución sobre la que corre la aplicación y los ficheros no ocultos que se tiene en el local de la máquina remota).
-### Despliegue: Completa el fichero `fabfile.py` para que instale el proyecto shield en una máquina remota con Fabric.
+
+### Despliegue: Contenido completo  del fichero `fabfile.py` para que instale el proyecto shield en una máquina remota con Fabric.
 1. Se añaden los import necearios:
 ```python
 import sys
@@ -239,19 +241,23 @@ fab development deploy
 
 
 ## Despliegue del  proyecto en una máquina remota con Ansible.
+### Instalaciones necearias:
 0. Instala Ansible en tu máquina local (Terminal de Ubuntu).
+Para Ubuntu:
 ```
 sudo apt update
 sudo apt install software-properties-common
 sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt install ansible
 ```
-Para comprobar que se instaló correctamente ejecuta el siguiente comando:
+Si se desea comprobar que se instaló correctamente ejecuta el siguiente comando:
 ```
 ansible localhost -m ping --ask-pass
 ```
+Puedes visitar https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
+### Crea la carpeta de trabajo  `ansible`: 
 1. Dentro de la aplicación shield, crea la carpeta "ansible".
-
+### Despliegue: Contenido completo  de la carpeta `ansible` para que instale el proyecto shield en una máquina remota con Ansible.
 2. La carpeta "ansible" debe contener los siguiente ficheros:
 - Fichero nombrado "hosts": En este fichero ubicaremos el inventario. 
 
@@ -274,10 +280,41 @@ ansible-playbook -i hosts provision.yml --user=cristopher --ask-pass --ask-becom
 ```
 Si usas AWS :
 ```
-ansible-playbook -i hosts deploy.yml --user=cristopher --ask-pass --ask-become-pass
+ansible-playbook -i hosts deploy.yml --user=vagran --ask-pass --ask-become-pass
 ```
 
-Puede visitar `https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html ` para completar los distintos ficheros anteriormente nombrados.
+Puede visitar https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html  para completar los distintos ficheros anteriormente nombrados.
+
 ## Despliegue del  proyecto en una máquina remota con Docker.
+### Instalaciones necearias:
+0. Instala Ansible en tu máquina local.
+- Para Windows (WSL 2): https://docs.docker.com/docker-for-windows/wsl/
+- Para Mac:
+ https://docs.docker.com/docker-for-mac/install/
+- Para Ubuntu: 
+https://docs.docker.com/engine/install/ubuntu/
 
+### Crea del fichero de trabajo `Dockerfile` en la raíz del proyecto que debe contener:
+1. Heredar el comportamiento base de la imagen `python:3.9-slim-buster`:
+```
+FROM python:3.9-slim-buster
+```
+Puede visitar https://hub.docker.com/_/python para más informacion.
 
+2. Especificar el directorio de trabajo:
+```
+WORKDIR /app
+```
+3. Prepararel entorno de ejecución (Copia de fichero `requirements.txt` a la imagen):
+```
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
+```
+4. Copiar el conternido del directorio a la imagen de Docker:
+```
+COPY . .
+```
+5. Arrancar la aplicación Shield:
+```
+CMD [ "python3", "manage.py" , "runserver" , "0.0.0.0:8000"]
+```
